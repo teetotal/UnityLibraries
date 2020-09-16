@@ -92,9 +92,9 @@ public class GradientObject
     public Gradient mGradient;
     private float mBaseXVal; //한 step당 X의 증가량
     private float mMomentum; //현재 가속도
-    private Point2D mMinPosition, mMaxPosition;
+    private Point2D mMinPosition, mMaxPosition, mSize;
     private Point2D mPrePosition;
-    public void Init(float baseX, float x, float y, float gradient, bool isUP, Point2D minPosition, Point2D maxPosition)
+    public void Init(float baseX, float x, float y, float gradient, bool isUP, Point2D minPosition, Point2D maxPosition, Point2D size)
     {
         mMomentum = 0.0f;
         mBaseXVal = baseX;
@@ -108,6 +108,7 @@ public class GradientObject
         mMaxPosition = new Point2D();
         mMaxPosition.Init(maxPosition.GetX(), maxPosition.GetY());
         mPrePosition = new Point2D(x, y);
+        mSize = new Point2D(size.GetX(), size.GetY());
     }
 
     public Point2D Next(float deltaTime)
@@ -116,7 +117,6 @@ public class GradientObject
 
         float x = 0.0f;
         float y = 0.0f;
-
         float baseX = mBaseXVal * deltaTime;
         //momentum
         if(mMomentum > 0.0f)
@@ -144,19 +144,19 @@ public class GradientObject
 
         mPoint.Add(x, y);
         if(mPoint.GetX() < mMinPosition.GetX())
-            mPoint.SetX(mMinPosition.GetX()); 
+            mPoint.SetX(mMinPosition.GetX() + (mSize.GetX() * 0.5f)); 
         if(mPoint.GetX() > mMaxPosition.GetX())
-            mPoint.SetX(mMaxPosition.GetX()); 
+            mPoint.SetX(mMaxPosition.GetX() - (mSize.GetX() * 0.5f)); 
         if(mPoint.GetY() < mMinPosition.GetY())
-            mPoint.SetY(mMinPosition.GetY()); 
+            mPoint.SetY(mMinPosition.GetY() + (mSize.GetY() * 0.5f)); 
         if(mPoint.GetY() > mMaxPosition.GetY())
-            mPoint.SetY(mMaxPosition.GetY()); 
+            mPoint.SetY(mMaxPosition.GetY() - (mSize.GetY() * 0.5f)); 
             
         return mPoint;
     }
 
     public void Force(Gradient g)
-    {
+    {        
         mGradient.Set(g);
         mMomentum = g.mMomentum;
     }
@@ -177,7 +177,7 @@ public class GradientObject
             side = GetSIDE(positionX, positionY, sizeX, sizeY, midX, midY);
             e -= 0.1f;
             //return side;
-            if(e < -5.9f) break;
+            //if(e < -5.9f) break;
         }
         return side;
     }
@@ -190,8 +190,8 @@ public class GradientObject
         float maxY = positionY + sizeY;
 
         bool top = false, bottom = false, left = false, right = false;
-        float marginX = sizeX * 0.49f;
-        float marginY = sizeY * 0.49f;
+        float marginX = sizeX * 0.5f;
+        float marginY = sizeY * 0.5f;
         if(minY <= contactY && minY + marginY >= contactY)
             bottom = true;
         if(maxY >= contactY && maxY - marginY <= contactY)
