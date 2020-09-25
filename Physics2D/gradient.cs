@@ -177,7 +177,9 @@ public class GradientObject
             side = GetSIDE(positionX, positionY, sizeX, sizeY, midX, midY);
             e -= 0.1f;
             //return side;
-            //if(e < -5.9f) break;
+            if(e < -5.9f) {
+                break;
+            }
         }
         return side;
     }
