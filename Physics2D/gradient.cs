@@ -111,6 +111,11 @@ public class GradientObject
         mSize = new Point2D(size.GetX(), size.GetY());
     }
 
+    public void Move(float x, float y)
+    {
+        mPoint.Set(x, y);
+    }
+
     public Point2D Next(float deltaTime)
     {
         mPrePosition.Set(mPoint);
