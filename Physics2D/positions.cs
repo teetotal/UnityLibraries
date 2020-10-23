@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Positions
 {
@@ -20,5 +21,69 @@ public class Positions
         Vector2 min = GetWorldPointMin(marginX, marginY);
         Vector2 max = GetWorldPointMax(marginX, marginY);
         return new Vector2(Math.Abs(min.x) + Math.Abs(max.x), Math.Abs(min.y) + Math.Abs(max.y));
+    }
+    public void DrawGrid(Vector2 margin, Vector2Int count)
+    {
+        DrawGrid(margin.x, margin.y, count.x, count.y);
+    }
+    public void DrawGrid(float marginX = 0.0f, float marginY = 0.0f, int countX = 5, int countY = 5)
+    {
+        const float width = 0.02f;
+        const string name = "DrawGrid";
+        //material이 있어야 색지정 가능
+        //lineRenderer.material = new Material (Shader.Find("Particles/Additive"));
+        //lineRenderer.startColor = new Color(0.1f, 0.1f, 0.1f, 0.5f);
+        Vector2 min = GetWorldPointMin(marginX, marginY);
+        Vector2 max = GetWorldPointMax(marginX, marginY);
+        Vector2 size = GetWorldPointSize(marginX, marginY);
+
+        float diffX = size.x / (float)countX;
+        float diffY = size.y / (float)countY;
+
+        for(int y = 0; y < countY + 1; y++)
+        {
+            LineRenderer lineRenderer = new GameObject(name + "_y_" + y.ToString()).AddComponent<LineRenderer>();
+            lineRenderer.positionCount = 2; 
+            lineRenderer.startWidth = width;
+
+            lineRenderer.SetPosition(0, new Vector3(min.x, min.y + (y * diffY), 0));
+            lineRenderer.SetPosition(1, new Vector3(max.x, min.y + (y * diffY), 0));
+        }
+
+        for(int x = 0; x < countX + 1; x++)
+        {
+            LineRenderer lineRenderer = new GameObject(name + "_x_" + x.ToString()).AddComponent<LineRenderer>();
+            lineRenderer.positionCount = 2; 
+            lineRenderer.startWidth = width;
+
+            lineRenderer.SetPosition(0, new Vector3(min.x + (x * diffX), min.y, 0));
+            lineRenderer.SetPosition(1, new Vector3(min.x + (x * diffX), max.y, 0));
+            //Debug.Log((x * diffX).ToString() + ", " + min.y.ToString() + " - " + (x * diffX).ToString() + ", " + max.y.ToString());
+        }
+    }
+    public Vector2 GetGridPoint(int x, int y, Vector2 margin, Vector2Int count)
+    {
+        return GetGridPoint(x, y, margin.x, margin.y, count.x, count.y);
+    }
+    public Vector2 GetGridPoint(int x, int y, float marginX = 0.0f, float marginY = 0.0f, int countX = 5, int countY = 5)
+    {
+        Vector2 min = GetWorldPointMin(marginX, marginY);
+        Vector2 max = GetWorldPointMax(marginX, marginY);
+        Vector2 size = GetWorldPointSize(marginX, marginY);
+
+        float diffX = size.x / (float)countX;
+        float diffY = size.y / (float)countY;
+
+        Vector2 pos = new Vector2();
+        float xPre = min.x + (x * diffX);
+        float xNext = min.x + ((x+1) * diffX);
+
+        float yPre = min.y + (y * diffY);
+        float yNext = min.y + ((y+1) * diffY);
+
+        pos.x = xPre + (xNext - xPre) * 0.5f;
+        pos.y = yPre + (yNext - yPre) * 0.5f;
+
+        return pos;
     }
 }
