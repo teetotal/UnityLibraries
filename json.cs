@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Json
 {
-    const string _res = "Assets/Resources/";
+    static string _res = Application.dataPath + "/Resources/";
     public static string ToJson(object json)
     {
         return JsonUtility.ToJson(json);
