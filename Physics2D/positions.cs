@@ -30,17 +30,37 @@ public class Positions
     }
     public void DrawGrid(Vector2 margin, Vector2Int count)
     {
-        DrawGrid(margin.x, margin.y, count.x, count.y);
+        Vector2 min, max;
+        min = new Vector2(0.0f, 0.0f);
+        max = new Vector2(0.0f, 0.0f);
+        DrawGrid(margin.x, margin.y, count.x, count.y, min, max);
     }
-    public void DrawGrid(float marginX = 0.0f, float marginY = 0.0f, int countX = 5, int countY = 5)
+    public void DrawGrid(Vector2 margin, Vector2Int count, Vector2 _min, Vector2 _max)
+    {
+        DrawGrid(margin.x, margin.y, count.x, count.y, _min, _max);
+    }
+    protected void DrawGrid(float marginX, float marginY, int countX, int countY, Vector2 _min, Vector2 _max)
     {
         const float width = 0.02f;
         const string name = "DrawGrid";
         //material이 있어야 색지정 가능
         //lineRenderer.material = new Material (Shader.Find("Particles/Additive"));
         //lineRenderer.startColor = new Color(0.1f, 0.1f, 0.1f, 0.5f);
-        Vector2 min = GetWorldPointMin(marginX, marginY);
-        Vector2 max = GetWorldPointMax(marginX, marginY);
+
+        Vector2 min, max;
+        if(_min.x != _max.x && _min.y != _max.y)
+        {
+            min = _min;
+            max = _max;
+        } 
+        else
+        {
+            min = GetWorldPointMin(marginX, marginY);
+            max = GetWorldPointMax(marginX, marginY);
+        }
+
+        //Vector2 min = GetWorldPointMin(marginX, marginY);
+        //Vector2 max = GetWorldPointMax(marginX, marginY);
         Vector2 size = GetSize(min, max);
 
         float diffX = size.x / (float)countX;
@@ -172,13 +192,40 @@ public class Positions
         return obj.GetComponent<SpriteRenderer>().bounds.size;
     }
 
-    public void SetGameObjectSize(ref GameObject obj, float width, float height)
+    public void SetGameObjectSize(ref GameObject obj, float width, float height, bool isSameRatio = false, bool fixToLager = false)
     {
         Vector3 size = GetGameObjectSize(obj);
         Vector3 scale = obj.transform.localScale;
 
         float scaleX = width * scale.x / size.x;
         float scaleY = height * scale.y / size.y;
+
+        if(isSameRatio)
+        {
+            if(fixToLager == false)
+            {
+                if(scaleX < scaleY)
+                {
+                    scaleY = scaleX;
+                }
+                else
+                {
+                    scaleX = scaleY;
+                }
+            }
+            else
+            {
+                if(scaleX < scaleY)
+                {
+                    scaleX = scaleY;
+                }
+                else
+                {
+                    scaleY = scaleX;
+                }
+            }
+            
+        } 
 
         obj.transform.localScale = new Vector3(scaleX, scaleY, scale.z);
     }

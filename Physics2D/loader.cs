@@ -40,6 +40,7 @@ public class Loader
     public List<LoaderObject> _Objects; // = new List<LoaderObject>();
     public List<sub> _Subs; // = new List<sub>();
     protected List<GameObject> mObjList = new List<GameObject>(); //생성한 object 저장용
+    protected HashSet<string> mDrawGridSubSet = new HashSet<string>();
     protected Positions mPos = new Positions();
 
     private static readonly Lazy<Loader> hInstance =
@@ -84,6 +85,10 @@ public class Loader
     {
         mPos.DrawGrid(_Margin, _GridDim);
     }
+    public void AddSubDrawGrid(string nameOfSub)
+    {
+        mDrawGridSubSet.Add(nameOfSub);
+    }
 
     public void AddComponents(LoaderCallBack cb, LoaderPostCallBack cbPost = null)
     {   
@@ -108,6 +113,11 @@ public class Loader
             List<Vector2> minMax = mPos.GetGridMinMax(_Margin, _InnerMargin, _GridDim, s._From, s._To);
             points = mPos.GetGridPoints(s._Margin, s._GridDim, minMax[0], minMax[1]);
             gridSize = mPos.GetGridSize(minMax[0], minMax[1], s._InnerMargin, s._GridDim);
+
+            if(mDrawGridSubSet.Contains(s._Name) == true)
+            {
+                mPos.DrawGrid(s._Margin, s._GridDim, minMax[0], minMax[1]);
+            }
 
             for(int n = 0; n < s._Objects.Count; n++)
             {
