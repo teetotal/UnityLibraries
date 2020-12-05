@@ -30,16 +30,19 @@ public class Loader
         public Vector2Int _GridDim;
         public Vector2 _Margin;
         public Vector2 _InnerMargin;
-        public List<LoaderObject> _Objects; // = new List<LoaderObject>();
+        public List<LoaderObject> _Objects;
     }
 
     public string _Name;
     public Vector2Int _GridDim;
     public Vector2 _Margin;
     public Vector2 _InnerMargin;
-    public List<LoaderObject> _Objects; // = new List<LoaderObject>();
-    public List<sub> _Subs; // = new List<sub>();
-    protected List<GameObject> mObjList = new List<GameObject>(); //생성한 object 저장용
+    public List<LoaderObject> _Objects;
+    public List<sub> _Subs; 
+
+    //생성한 object 저장용
+    protected Dictionary<string, List<GameObject>> mObjects = new Dictionary<string, List<GameObject>>();
+
     protected HashSet<string> mDrawGridSubSet = new HashSet<string>();
     protected Positions mPos = new Positions();
 
@@ -90,6 +93,23 @@ public class Loader
         mDrawGridSubSet.Add(nameOfSub);
     }
 
+    public GameObject GetObject(string name)
+    {
+        if(mObjects.ContainsKey(name))
+        {
+            return mObjects[name][0];
+        }
+        return null;
+    }
+    public List<GameObject> GetObjects(string name)
+    {
+        if(mObjects.ContainsKey(name))
+        {
+            return mObjects[name];
+        }
+        return null;
+    }
+
     public void AddComponents(LoaderCallBack cb, LoaderPostCallBack cbPost = null)
     {   
         List<Vector2> points = mPos.GetGridPoints(_Margin, _GridDim);
@@ -103,7 +123,19 @@ public class Loader
 
             GameObject obj = cb(_Name, _Objects[n].name, _Objects[n].tag, points[idx], gridSize);
             if(obj != null)
-                mObjList.Add(UnityEngine.Object.Instantiate(obj));
+            {
+                GameObject instance = UnityEngine.Object.Instantiate(obj);
+                if(mObjects.ContainsKey(_Objects[n].name) == false)
+                {
+                    mObjects[_Objects[n].name] = new List<GameObject>();
+                }
+
+                mObjects[_Objects[n].name].Add(instance);
+                if(cbPost != null)
+                {
+                    cbPost(instance, _Objects[n].name);
+                }
+            }
         }
 
         //_subs 처리 해야됨
@@ -129,7 +161,13 @@ public class Loader
                 if(obj != null)
                 {
                     GameObject instance = UnityEngine.Object.Instantiate(obj);
-                    mObjList.Add(instance);
+                    if(mObjects.ContainsKey(s._Objects[n].name) == false)
+                    {
+                        mObjects[s._Objects[n].name] = new List<GameObject>();
+                    }
+                    
+                    mObjects[s._Objects[n].name].Add(instance);
+
                     if(cbPost != null)
                     {
                         cbPost(instance, s._Name);
