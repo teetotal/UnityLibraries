@@ -38,6 +38,15 @@ public class Touch
         return null;
     }
 
+    public GameObject AddCanvas(GameObject uiObj, Vector3 worldPosition, Camera camera, Transform tfCanvas)
+    {
+        GameObject obj = UnityEngine.Object.Instantiate(uiObj);
+        obj.transform.position = camera.WorldToScreenPoint(worldPosition);
+        obj.transform.SetParent(tfCanvas);
+
+        return obj;
+    }
+/*
     public Text AddText(Text uiObj, Vector3 worldPosition, Camera camera, Transform tfCanvas)
     {
         Text obj = UnityEngine.Object.Instantiate(uiObj);
@@ -45,5 +54,5 @@ public class Touch
         obj.transform.SetParent(tfCanvas);
 
         return obj;
-    }
+    }*/
 }
