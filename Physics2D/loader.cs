@@ -10,6 +10,7 @@ using UnityEngine.UI;
 
 public delegate GameObject LoaderCallBack(string layerName,string name, string tag, Vector2 position, Vector2 size);
 public delegate void LoaderPostCallBack(GameObject obj, string layerName);
+public delegate void LoaderButtonOnClickCallBack(GameObject obj);
 
 [Serializable]
 public class Loader
@@ -36,6 +37,7 @@ public class Loader
         public Vector2 _Margin;
         public Vector2 _InnerMargin;
         public List<LoaderObject> _Objects;
+        public bool _DrawGridLine;
     }
 
     public string _Name;
@@ -48,6 +50,7 @@ public class Loader
     //UI
     protected Camera mCamera;
     protected Canvas mCanvas;
+    protected LoaderButtonOnClickCallBack mButtonCallBack;
     //생성한 object 저장용
     protected Dictionary<string, List<GameObject>> mObjects = new Dictionary<string, List<GameObject>>();
     protected HashSet<string> mDrawGridSubSet = new HashSet<string>();
@@ -74,10 +77,11 @@ public class Loader
         Instance._Objects = new List<LoaderObject>(obj._Objects);
         Instance._Subs = new List<sub>(obj._Subs);
     }
-    public void SetUI(Camera camera, ref Canvas canvas)
+    public void SetUI(Camera camera, ref Canvas canvas, LoaderButtonOnClickCallBack buttonCallBack)
     {
         mCamera = camera;
         mCanvas = canvas;
+        mButtonCallBack = buttonCallBack;
     }
     public bool LoadJsonFile(string path)
     {
@@ -149,7 +153,7 @@ public class Loader
             points = mPos.GetGridPoints(s._Margin, s._GridDim, minMax[0], minMax[1]);
             gridSize = mPos.GetGridSize(minMax[0], minMax[1], s._InnerMargin, s._GridDim);
 
-            if(mDrawGridSubSet.Contains(s._Name) == true)
+            if(mDrawGridSubSet.Contains(s._Name) == true || s._DrawGridLine == true)
             {
                 mPos.DrawGrid(s._Margin, s._GridDim, minMax[0], minMax[1]);
             }
@@ -203,6 +207,12 @@ public class Loader
                     gridScreenSize.y -= obj.transform.position.y;
 
                     obj.GetComponent<RectTransform>().sizeDelta = new Vector2(gridScreenSize.x, gridScreenSize.y);
+                }
+                //onclick
+                Button btn = obj.GetComponent<Button>();
+                if(btn != null)
+                {
+                    btn.onClick.AddListener(() => {mButtonCallBack(obj);});
                 }
             }
             //text
