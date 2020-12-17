@@ -38,6 +38,7 @@ public class Loader
         public Vector2 _InnerMargin;
         public List<LoaderObject> _Objects;
         public bool _DrawGridLine;
+        public List<float> _BGColor;
     }
 
     public string _Name;
@@ -151,7 +152,12 @@ public class Loader
             sub s = _Subs[i];
             List<Vector2> minMax = mPos.GetGridMinMax(_Margin, _InnerMargin, _GridDim, s._From, s._To);
             points = mPos.GetGridPoints(s._Margin, s._GridDim, minMax[0], minMax[1]);
-            gridSize = mPos.GetGridSize(minMax[0], minMax[1], s._InnerMargin, s._GridDim);
+            gridSize = mPos.GetGridSize(minMax[0], minMax[1], s._Margin, s._InnerMargin, s._GridDim);
+            //bg
+            if(s._BGColor.Count > 0)
+            {
+                GameObject panel = CreatePanel("BG-" + s._Name, minMax, s._BGColor, s._Margin);
+            }
 
             if(mDrawGridSubSet.Contains(s._Name) == true || s._DrawGridLine == true)
             {
@@ -240,5 +246,27 @@ public class Loader
                 cbPost(obj, layerName);
             }
         }   
+    }
+    GameObject CreatePanel(string name, List<Vector2> minMax, List<float> color, Vector2 margin)
+    {
+        GameObject panel = new GameObject(name);
+        panel.AddComponent<CanvasRenderer>();
+        Image i = panel.AddComponent<Image>();
+        Color c = new Color(color[0], color[1], color[2], color[3]);
+        i.color = c;
+        UnityEngine.Object.Instantiate(panel);
+
+        Vector2 center = new Vector2();
+        center.x = minMax[0].x + ((minMax[1].x - minMax[0].x) * 0.5f);
+        center.y = minMax[0].y + ((minMax[1].y - minMax[0].y) * 0.5f);
+
+        panel.transform.position = mCamera.WorldToScreenPoint(new Vector3(center.x, center.y, 0));
+
+        Vector3 minPosition = mCamera.WorldToScreenPoint(new Vector3(minMax[0].x + margin.x, minMax[0].y + margin.y, 0));
+        Vector3 maxPosition = mCamera.WorldToScreenPoint(new Vector3(minMax[1].x - margin.x, minMax[1].y - margin.y, 0));
+
+        panel.GetComponent<RectTransform>().sizeDelta = new Vector2(maxPosition.x - minPosition.x, maxPosition.y - minPosition.y);
+        panel.transform.SetParent(mCanvas.transform);
+        return panel;
     }
 }

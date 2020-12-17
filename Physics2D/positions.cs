@@ -61,6 +61,12 @@ public class Positions
 
         //Vector2 min = GetWorldPointMin(marginX, marginY);
         //Vector2 max = GetWorldPointMax(marginX, marginY);
+
+        min.x += marginX;
+        min.y += marginY;
+        max.x -= marginX;
+        max.y -= marginY;
+
         Vector2 size = GetSize(min, max);
 
         float diffX = size.x / (float)countX;
@@ -142,6 +148,12 @@ public class Positions
 
         //Vector2 min = GetWorldPointMin(marginX, marginY);
         //Vector2 max = GetWorldPointMax(marginX, marginY);
+
+        min.x += marginX;
+        min.y += marginY;
+        max.x -= marginX;
+        max.y -= marginY;
+
         Vector2 size = GetSize(min, max);
 
         float diffX = size.x / (float)countX;
@@ -167,9 +179,12 @@ public class Positions
 
         return list;
     }
-    public Vector2 GetGridSize(Vector2 min, Vector2 max, Vector2 innerMargin, Vector2Int count)
+    public Vector2 GetGridSize(Vector2 min, Vector2 max, Vector2 margin, Vector2 innerMargin, Vector2Int count)
     {
-        return GetGridSize(GetSize(min, max), innerMargin, count.x, count.y);
+        Vector2 size = GetSize(min, max);
+        size.x -= margin.x * 2.0f;
+        size.y -= margin.y * 2.0f;
+        return GetGridSize(size, innerMargin, count.x, count.y);
     }
     public Vector2 GetGridSize(Vector2 margin, Vector2 innerMargin, Vector2Int count)
     {
