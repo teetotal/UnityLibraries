@@ -254,7 +254,7 @@ public class Loader
         Image i = panel.AddComponent<Image>();
         Color c = new Color(color[0], color[1], color[2], color[3]);
         i.color = c;
-        UnityEngine.Object.Instantiate(panel);
+        panel = UnityEngine.Object.Instantiate(panel);
 
         Vector2 center = new Vector2();
         center.x = minMax[0].x + ((minMax[1].x - minMax[0].x) * 0.5f);
