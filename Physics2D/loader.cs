@@ -53,7 +53,7 @@ public class Loader
     protected Canvas mCanvas;
     protected LoaderButtonOnClickCallBack mButtonCallBack;
     //생성한 object 저장용
-    protected Dictionary<string, List<GameObject>> mObjects = new Dictionary<string, List<GameObject>>();
+    public Dictionary<string, List<GameObject>> mObjects = new Dictionary<string, List<GameObject>>();
     protected HashSet<string> mDrawGridSubSet = new HashSet<string>();
     protected Positions mPos = new Positions();
 
@@ -136,6 +136,7 @@ public class Loader
     {   
         List<Vector2> points = mPos.GetGridPoints(_Margin, _GridDim);
         Vector2 gridSize = mPos.GetGridSize(_Margin, _InnerMargin, _GridDim);
+        mObjects["BG"] = new List<GameObject>();
 
         for(int n = 0; n < _Objects.Count; n++)
         {
@@ -157,6 +158,7 @@ public class Loader
             if(s._BGColor.Count > 0)
             {
                 GameObject panel = CreatePanel("BG-" + s._Name, minMax, s._BGColor, s._Margin);
+                mObjects["BG"].Add(panel);
             }
 
             if(mDrawGridSubSet.Contains(s._Name) == true || s._DrawGridLine == true)
