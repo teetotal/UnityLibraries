@@ -18,18 +18,6 @@ public class Http {
     protected Http()
     {
     }
-
-    
-    /*
-    public void Get(string uri)
-    {
-        IEnumerator pages = GetRequest(uri);
-        while(pages.MoveNext())
-        {
-            object result = pages.Current;
-        }
-    }
-    */
     
     public IEnumerator GetRequest(string uri, Callback cb)
     {
@@ -47,7 +35,7 @@ public class Http {
             }
             else
             {
-                Debug.Log(pages[page] + ":\nReceived: " + webRequest.downloadHandler.text);
+                //Debug.Log(pages[page] + ":\nReceived: " + webRequest.downloadHandler.text);
                 if(cb != null)
                     cb(pages[page].Split('?')[0], webRequest.downloadHandler.text);
             }
@@ -72,7 +60,7 @@ public class Http {
             }
             else
             {
-                Debug.Log(pages[page] + ":\nReceived: " + webRequest.downloadHandler.text);
+                //Debug.Log(pages[page] + ":\nReceived: " + webRequest.downloadHandler.text);
                 if(cb != null)
                     cb(pages[page].Split('?')[0], webRequest.downloadHandler.text);
             }
