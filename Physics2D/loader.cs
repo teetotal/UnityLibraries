@@ -50,7 +50,7 @@ public class Loader
 
     //UI
     protected Camera mCamera;
-    protected Canvas mCanvas;
+    protected Transform mCanvas;
     protected LoaderButtonOnClickCallBack mButtonCallBack;
     //생성한 object 저장용
     public Dictionary<string, List<GameObject>> mObjects = new Dictionary<string, List<GameObject>>();
@@ -78,7 +78,7 @@ public class Loader
         Instance._Objects = new List<LoaderObject>(obj._Objects);
         Instance._Subs = new List<sub>(obj._Subs);
     }
-    public void SetUI(Camera camera, ref Canvas canvas, LoaderButtonOnClickCallBack buttonCallBack)
+    public void SetUI(Camera camera, ref Transform canvas, LoaderButtonOnClickCallBack buttonCallBack)
     {
         mCamera = camera;
         mCanvas = canvas;
@@ -205,7 +205,7 @@ public class Loader
             if(node.ui == true)
             {
                 obj.transform.position = mCamera.WorldToScreenPoint(new Vector3(point.x, point.y, 0));
-                obj.transform.SetParent(mCanvas.transform);
+                obj.transform.SetParent(mCanvas);
                 
                 //resizing
                 if(node.prefab != null && node.prefab.Length > 0)
@@ -268,7 +268,7 @@ public class Loader
         Vector3 maxPosition = mCamera.WorldToScreenPoint(new Vector3(minMax[1].x - margin.x, minMax[1].y - margin.y, 0));
 
         panel.GetComponent<RectTransform>().sizeDelta = new Vector2(maxPosition.x - minPosition.x, maxPosition.y - minPosition.y);
-        panel.transform.SetParent(mCanvas.transform);
+        panel.transform.SetParent(mCanvas);
         return panel;
     }
 }

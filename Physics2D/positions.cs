@@ -8,13 +8,21 @@ public class Positions
 {
     public Vector2 GetWorldPointMin(float marginX = 0.0f, float marginY = 0.0f)
     {
-        Vector2 p = Camera.main.ViewportToWorldPoint(Vector2.zero);
+        Rect safeArea = Screen.safeArea;
+        float x = (safeArea.position.x) / Screen.width;
+        float y = (safeArea.position.y) / Screen.height;
+
+        Vector2 p = Camera.main.ViewportToWorldPoint(new Vector2(x, y));
         return new Vector2(p.x + marginX, p.y + marginY);
     }
 
     public Vector2 GetWorldPointMax(float marginX = 0.0f, float marginY = 0.0f)
     {
-        Vector2 p = Camera.main.ViewportToWorldPoint(new Vector2(1, 1));
+        Rect safeArea = Screen.safeArea;
+        float x = (safeArea.width + safeArea.position.x) / Screen.width;
+        float y = (safeArea.height + safeArea.position.y) / Screen.height;
+
+        Vector2 p = Camera.main.ViewportToWorldPoint(new Vector2(x, y));
         return new Vector2(p.x - marginX, p.y - marginY);
     }
 
