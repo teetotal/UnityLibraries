@@ -86,7 +86,7 @@ public class Loader
     }
     public bool LoadJsonFile(string path)
     {
-        Loader obj = Json.LoadJsonFile<Loader>(path);
+        Loader obj = Json.LoadJsonFileFromResources<Loader>(path);
         Init(obj);
 
         return true;
