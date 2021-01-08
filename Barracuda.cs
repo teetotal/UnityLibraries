@@ -55,8 +55,9 @@ public class Barracuda
             //Debug.Log(output[n].ToString());
             ret.Add(output[n]);
         }
+        inputs[mRuntimeModel.inputs[0].name].Dispose();
+        output.Dispose();
 
         return ret;
-
     }
 }
