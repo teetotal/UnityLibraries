@@ -19,6 +19,7 @@ public class Loader
     public struct LoaderObject
     {
         public Vector2Int position;
+        public Vector2Int span;
         public Vector2 pivot;
         public string name;
         public string tag;
@@ -144,7 +145,8 @@ public class Loader
             if(idx > points.Count)
                 throw new Exception("Invalid index. check _GridDim & _Objects position");
             
-            CreateObject(_Name, _Objects[n], GetPosition(points[idx], gridSize, _Objects[n].pivot), gridSize, cb, cbPost);
+            sub s = new sub();
+            CreateObject(_Name, _Objects[n], GetPosition(points[idx], gridSize, _Objects[n].pivot), gridSize, cb, cbPost, _Objects[n], s);
         }
 
         //_subs
@@ -173,11 +175,12 @@ public class Loader
                 if(idx > points.Count)
                     throw new Exception("Invalid index. check _GridDim & _Objects position. " + s._Name);
                 
-                CreateObject(s._Name, node, GetPosition(points[idx], gridSize, node.pivot), gridSize, cb, cbPost);
+                CreateObject(s._Name, node, GetPosition(points[idx], gridSize, node.pivot), gridSize, cb, cbPost, node, s);
             }
         }
     }
-    private void CreateObject(string layerName,LoaderObject node, Vector2 point, Vector2 gridSize, LoaderCallBack cb, LoaderPostCallBack cbPost)
+    private void CreateObject(string layerName,LoaderObject node, Vector2 point, Vector2 gridSize, LoaderCallBack cb, LoaderPostCallBack cbPost
+        , LoaderObject loaderObj, sub subObj)
     {
         GameObject obj;
 
@@ -210,10 +213,16 @@ public class Loader
                 //resizing
                 if(node.prefab != null && node.prefab.Length > 0)
                 {
+                    //span 처리
+                    if(subObj._InnerMargin.x > 0 || subObj._InnerMargin.y > 0)
+                    {
+                        gridSize.x = (gridSize.x * (loaderObj.span.x + 1)) + (subObj._InnerMargin.x * 2.0f * loaderObj.span.x);
+                        gridSize.y = (gridSize.y * (loaderObj.span.y + 1)) + (subObj._InnerMargin.y * 2.0f * loaderObj.span.y);
+                    }
                     Vector3 gridScreenSize = mCamera.WorldToScreenPoint(new Vector3(point.x + gridSize.x, point.y + gridSize.y, 0));
                     gridScreenSize.x -= obj.transform.position.x;
                     gridScreenSize.y -= obj.transform.position.y;
-
+                   
                     obj.GetComponent<RectTransform>().sizeDelta = new Vector2(gridScreenSize.x, gridScreenSize.y);
                 }
                 //onclick
