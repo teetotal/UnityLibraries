@@ -40,10 +40,40 @@ public class Barracuda
         float[] buffer = Enumerable.Repeat<float>(-1, size_node + (size_node * size_positions * 2)).ToArray<float>();
     }
     */
+
     public List<float> Execute_Shape3(float[] tensor, int[] shape)
     {
         var inputs = new Dictionary<string, Tensor>();
         inputs[mRuntimeModel.inputs[0].name] = new Tensor(1, shape[0], shape[1], shape[2], tensor);
+        /*
+        mInputName = mRuntimeModel.inputs[0].name;
+        mOutputName = mRuntimeModel.outputs[0];
+        */
+        var output = mWorker.Execute(inputs).PeekOutput(mRuntimeModel.outputs[0]);
+        List<float> ret = new List<float>();
+        for(int n = 0; n<output.length; n++)
+        {
+            //Debug.Log(output[n].ToString());
+            ret.Add(output[n]);
+        }
+        inputs[mRuntimeModel.inputs[0].name].Dispose();
+        output.Dispose();
+
+        return ret;
+    }
+    public List<float> Execute_Shape3(List<float[]> tensor, int[] shape)
+    {
+        var inputs = new Dictionary<string, Tensor>();
+        /*
+        float[] inputBuffer = new float[tensor[0].Length * tensor.Count];
+        for(int n=0; n < tensor.Count; n++)
+        {
+            tensor[n].CopyTo(inputBuffer, n * tensor[0].Length);
+        }
+        */
+        float[][] inputBuffer = tensor.ToArray();
+        
+        inputs[mRuntimeModel.inputs[0].name] = new Tensor(tensor.Count, shape[0], shape[1], shape[2], inputBuffer);
         /*
         mInputName = mRuntimeModel.inputs[0].name;
         mOutputName = mRuntimeModel.outputs[0];
