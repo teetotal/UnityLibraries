@@ -40,6 +40,33 @@ public class Barracuda
         float[] buffer = Enumerable.Repeat<float>(-1, size_node + (size_node * size_positions * 2)).ToArray<float>();
     }
     */
+    public List<float> Execute_Shape1(List<float[]> tensor, int shape)
+    {
+        float[][] inputBuffer = tensor.ToArray();
+        var inputs = new Dictionary<string, Tensor>();
+        inputs[mRuntimeModel.inputs[0].name] = new Tensor(tensor.Count, shape, inputBuffer);
+        
+
+        return Execute(inputs);
+    }
+    private List<float> Execute(Dictionary<string, Tensor> inputs)
+    {        
+        /*
+        mInputName = mRuntimeModel.inputs[0].name;
+        mOutputName = mRuntimeModel.outputs[0];
+        */
+        var output = mWorker.Execute(inputs).PeekOutput(mRuntimeModel.outputs[0]);
+        List<float> ret = new List<float>();
+        for (int n = 0; n < output.length; n++)
+        {
+            //Debug.Log(output[n].ToString());
+            ret.Add(output[n]);
+        }
+        inputs[mRuntimeModel.inputs[0].name].Dispose();
+        output.Dispose();
+
+        return ret;
+    }
 
     public List<float> Execute_Shape3(float[] tensor, int[] shape)
     {
