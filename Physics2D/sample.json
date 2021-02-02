@@ -1,0 +1,84 @@
+{
+    "_Name": "main",
+    "_GridDim":{"x":1,"y":18},
+    "_Margin":{"x":0.0,"y":0.0},
+    "_InnerMargin":{"x":0.0,"y":0.0},
+    "_Objects": [
+    ],
+    "_Subs":[
+        {
+            "_Name": "top",
+            "_BGColor": [0, 0 , 0, 0.5],
+            "_From": {"x": 0, "y": 17},
+            "_To": {"x": 0, "y": 17},
+            "_GridDim":{"x":4,"y":1},
+            "_Margin":{"x":0.0,"y":0.0},
+            "_InnerMargin":{"x":0.1,"y":0.1},
+            "_DrawGridLine": false,
+            "_Objects":[
+                {
+                    "position":{"x":0,"y":0},
+                    "name":"mode",
+                    "tag":"UI",
+                    "prefab": "text_player",
+                    "ui": true,
+                    "text": "1:1 공식경기"
+                },
+                {
+                    "position":{"x":1,"y":0},
+                    "name":"win_rate",
+                    "tag":"UI",
+                    "prefab": "text_player",
+                    "ui": true,
+                    "text": "승률"
+                },
+                {
+                    "position":{"x":3,"y":0},
+                    "name":"config",
+                    "tag":"UI",
+                    "prefab": "button_default",
+                    "ui": true,
+                    "text": "설정"
+                }
+            ]
+        },
+        {
+            "_Name": "top2",
+            "_BGColor": [1, 1 , 1, 0.2],
+            "_From": {"x": 0, "y": 16},
+            "_To": {"x": 0, "y": 16},
+            "_GridDim":{"x":1,"y":1},
+            "_Margin":{"x":0.1, "y":0.0},
+            "_InnerMargin":{"x":0.0,"y":0.1},
+            "_DrawGridLine": false,
+            "_Objects":[
+                {
+                    "position":{"x":0,"y":0},
+                    "name":"name",
+                    "tag":"UI",
+                    "prefab": "input_default",
+                    "ui": true,
+                    "text": "aid"
+                }
+            ]
+        },
+        {
+            "_Name": "scrollview",
+            "_From": {"x": 0, "y": 0},
+            "_To": {"x": 0, "y": 15},
+            "_GridDim":{"x":1,"y":1},
+            "_Margin":{"x":0.1,"y":0.1},
+            "_InnerMargin":{"x":0.0,"y":0.0},
+            "_DrawGridLine": false,
+            "_Objects":[
+                {
+                    "position":{"x":0,"y":0},
+                    "name":"scrollview",
+                    "tag":"UI",
+                    "prefab": "ui_scrollview",
+                    "ui": true
+                }
+            ]
+        }
+    ]
+}
