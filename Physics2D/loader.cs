@@ -146,7 +146,7 @@ public class Loader
                 throw new Exception("Invalid index. check _GridDim & _Objects position");
             
             sub s = new sub();
-            CreateObject(_Name, _Objects[n], GetPosition(points[idx], gridSize, _Objects[n].pivot), gridSize, cb, cbPost, _Objects[n], s);
+            CreateObject(null, _Objects[n], GetPosition(points[idx], gridSize, _Objects[n].pivot), gridSize, cb, cbPost, _Objects[n], s);
         }
 
         //_subs
@@ -156,17 +156,20 @@ public class Loader
             List<Vector2> minMax = mPos.GetGridMinMax(_Margin, _InnerMargin, _GridDim, s._From, s._To);
             points = mPos.GetGridPoints(s._Margin, s._GridDim, minMax[0], minMax[1]);
             gridSize = mPos.GetGridSize(minMax[0], minMax[1], s._Margin, s._InnerMargin, s._GridDim);
-            //bg
+            GameObject layer;
+            List<float> bgColor;
+            //bg color
             if(s._BGColor.Count > 0)
             {
-                GameObject panel = CreatePanel("BG-" + s._Name, minMax, s._BGColor, s._Margin);
-                mObjects["BG"].Add(panel);
+                bgColor = s._BGColor;
             }
-
-            if(mDrawGridSubSet.Contains(s._Name) == true || s._DrawGridLine == true)
+            else
             {
-                mPos.DrawGrid(s._Margin, s._GridDim, minMax[0], minMax[1]);
+                bgColor = new List<float>();
+                for(int n = 0; n < 4; n++) bgColor.Add(0.0f);
             }
+            layer = CreatePanel(s._Name, minMax, bgColor, s._Margin);
+            mObjects["BG"].Add(layer);
 
             for(int n = 0; n < s._Objects.Count; n++)
             {
@@ -175,14 +178,24 @@ public class Loader
                 if(idx > points.Count)
                     throw new Exception("Invalid index. check _GridDim & _Objects position. " + s._Name);
                 
-                CreateObject(s._Name, node, GetPosition(points[idx], gridSize, node.pivot), gridSize, cb, cbPost, node, s);
+                CreateObject(layer, node, GetPosition(points[idx], gridSize, node.pivot), gridSize, cb, cbPost, node, s);
+            }
+            //Draw Line
+            if(mDrawGridSubSet.Contains(s._Name) == true || s._DrawGridLine == true)
+            {
+                mPos.DrawGrid(s._Margin, s._GridDim, minMax[0], minMax[1], mCanvas);
             }
         }
     }
-    private void CreateObject(string layerName,LoaderObject node, Vector2 point, Vector2 gridSize, LoaderCallBack cb, LoaderPostCallBack cbPost
+    private void CreateObject(GameObject layer,LoaderObject node, Vector2 point, Vector2 gridSize, LoaderCallBack cb, LoaderPostCallBack cbPost
         , LoaderObject loaderObj, sub subObj)
     {
         GameObject obj;
+        string layerName;
+        if(layer != null)
+            layerName = layer.name;
+        else
+            layerName = _Name;
 
         //prefab   
         if(node.prefab != null && node.prefab.Length > 0)
@@ -208,7 +221,10 @@ public class Loader
             if(node.ui == true)
             {
                 obj.transform.position = mCamera.WorldToScreenPoint(new Vector3(point.x, point.y, 0));
-                obj.transform.SetParent(mCanvas);
+                if(layer == null)
+                    obj.transform.SetParent(mCanvas);
+                else
+                    obj.transform.SetParent(layer.transform);
                 
                 //resizing
                 if(node.prefab != null && node.prefab.Length > 0)
@@ -265,7 +281,7 @@ public class Loader
         Image i = panel.AddComponent<Image>();
         Color c = new Color(color[0], color[1], color[2], color[3]);
         i.color = c;
-        panel = UnityEngine.Object.Instantiate(panel);
+        //panel = UnityEngine.Object.Instantiate(panel);
 
         Vector2 center = new Vector2();
         center.x = minMax[0].x + ((minMax[1].x - minMax[0].x) * 0.5f);

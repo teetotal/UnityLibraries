@@ -43,11 +43,11 @@ public class Positions
         max = new Vector2(0.0f, 0.0f);
         DrawGrid(margin.x, margin.y, count.x, count.y, min, max);
     }
-    public void DrawGrid(Vector2 margin, Vector2Int count, Vector2 _min, Vector2 _max)
+    public void DrawGrid(Vector2 margin, Vector2Int count, Vector2 _min, Vector2 _max, Transform parent)
     {
-        DrawGrid(margin.x, margin.y, count.x, count.y, _min, _max);
+        DrawGrid(margin.x, margin.y, count.x, count.y, _min, _max, parent);
     }
-    protected void DrawGrid(float marginX, float marginY, int countX, int countY, Vector2 _min, Vector2 _max)
+    protected void DrawGrid(float marginX, float marginY, int countX, int countY, Vector2 _min, Vector2 _max, Transform parent = null)
     {
         const float width = 0.02f;
         const string name = "DrawGrid";
@@ -88,6 +88,9 @@ public class Positions
 
             lineRenderer.SetPosition(0, new Vector3(min.x, min.y + (y * diffY), 0));
             lineRenderer.SetPosition(1, new Vector3(max.x, min.y + (y * diffY), 0));
+
+            if(parent != null)
+                lineRenderer.transform.SetParent(parent);
         }
 
         for(int x = 0; x < countX + 1; x++)
@@ -99,6 +102,8 @@ public class Positions
             lineRenderer.SetPosition(0, new Vector3(min.x + (x * diffX), min.y, 0));
             lineRenderer.SetPosition(1, new Vector3(min.x + (x * diffX), max.y, 0));
             //Debug.Log((x * diffX).ToString() + ", " + min.y.ToString() + " - " + (x * diffX).ToString() + ", " + max.y.ToString());
+            if(parent != null)
+                lineRenderer.transform.SetParent(parent);
         }
     }
     public Vector2 GetGridPoint(int x, int y, Vector2 margin, Vector2Int count)
