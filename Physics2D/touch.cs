@@ -37,6 +37,18 @@ public class Touch
 
         return null;
     }
+    public GameObject GetTouchedObject3D(Vector3 position)
+    {
+        RaycastHit hit;
+        Ray ray = Camera.main.ScreenPointToRay(position);
+        Physics.Raycast(ray, out hit);
+
+        if(hit.collider != null)
+        {
+            return hit.collider.gameObject;
+        }
+        return null;
+    }
 
     public GameObject AddCanvas(GameObject uiObj, Vector3 worldPosition, Camera camera, Transform tfCanvas)
     {
