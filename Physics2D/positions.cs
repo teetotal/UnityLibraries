@@ -6,23 +6,43 @@ using UnityEngine.UI;
 
 public class Positions
 {
-    public Vector2 GetWorldPointMin(float marginX = 0.0f, float marginY = 0.0f)
+    public Vector2 GetWorldPointMin(float marginX = 0.0f, float marginY = 0.0f, bool isPerspective = false)
     {
-        Rect safeArea = Screen.safeArea;
-        float x = (safeArea.position.x) / Screen.width;
-        float y = (safeArea.position.y) / Screen.height;
-
-        Vector2 p = Camera.main.ViewportToWorldPoint(new Vector2(x, y));
+        Vector2 p;
+        if (isPerspective)
+        {
+            Rect safeArea = Screen.safeArea;
+            return new Vector2(safeArea.position.x + marginX, safeArea.position.y + marginY);
+            //p = Camera.main.ScreenToWorldPoint(new Vector3(safeArea.position.x, Camera.main.pixelHeight - safeArea.position.y, Camera.main.nearClipPlane));
+        }
+        else
+        {
+            Rect safeArea = Screen.safeArea;
+            float x = (safeArea.position.x) / Screen.width;
+            float y = (safeArea.position.y) / Screen.height;
+            p = Camera.main.ViewportToWorldPoint(new Vector2(x, y));            
+        }
         return new Vector2(p.x + marginX, p.y + marginY);
     }
 
-    public Vector2 GetWorldPointMax(float marginX = 0.0f, float marginY = 0.0f)
+    public Vector2 GetWorldPointMax(float marginX = 0.0f, float marginY = 0.0f, bool isPerspective = false)
     {
-        Rect safeArea = Screen.safeArea;
-        float x = (safeArea.width + safeArea.position.x) / Screen.width;
-        float y = (safeArea.height + safeArea.position.y) / Screen.height;
+        Vector2 p;
+        if (isPerspective)
+        {
+            Rect safeArea = Screen.safeArea;
+            return new Vector2(safeArea.width + safeArea.position.x - marginX, safeArea.height + safeArea.position.y - marginY);
+            //p = Camera.main.ScreenToWorldPoint(new Vector3(safeArea.width + safeArea.position.x, Camera.main.pixelHeight - safeArea.height + safeArea.position.y, Camera.main.nearClipPlane));
+        }
+        else
+        {
+            Rect safeArea = Screen.safeArea;
+            float x = (safeArea.width + safeArea.position.x) / Screen.width;
+            float y = (safeArea.height + safeArea.position.y) / Screen.height;
 
-        Vector2 p = Camera.main.ViewportToWorldPoint(new Vector2(x, y));
+            p = Camera.main.ViewportToWorldPoint(new Vector2(x, y));
+        }
+           
         return new Vector2(p.x - marginX, p.y - marginY);
     }
 
@@ -108,13 +128,14 @@ public class Positions
     }
     public Vector2 GetGridPoint(int x, int y, Vector2 margin, Vector2Int count)
     {
-        return GetGridPoint(x, y, margin.x, margin.y, count.x, count.y);
-    }
-    public Vector2 GetGridPoint(int x, int y, float marginX = 0.0f, float marginY = 0.0f, int countX = 5, int countY = 5)
-    {
-        Vector2 min = GetWorldPointMin(marginX, marginY);
-        Vector2 max = GetWorldPointMax(marginX, marginY);
+        Vector2 min = GetWorldPointMin(margin.x, margin.y);
+        Vector2 max = GetWorldPointMax(margin.x, margin.y);
         Vector2 size = GetSize(min, max);
+
+        return GetGridPoint(size, min, x, y, margin.x, margin.y, count.x, count.y);
+    }
+    public Vector2 GetGridPoint(Vector2 size, Vector2 min, int x, int y, float marginX = 0.0f, float marginY = 0.0f, int countX = 5, int countY = 5)
+    {        
 
         float diffX = size.x / (float)countX;
         float diffY = size.y / (float)countY;
@@ -144,6 +165,33 @@ public class Positions
         Vector2 toMax = GetGridPoint(to.x, to.y, margin, count);
         toMax.x += gridSize.x / 2.0f;
         toMax.y += gridSize.y / 2.0f;
+
+        List<Vector2> list = new List<Vector2>(2);
+        list.Add(fromMin);
+        list.Add(toMax);
+
+        return list;
+    }
+    /// <summary>
+    /// for perspective
+    /// </summary>
+    /// <param name="gridSize">전체 grid size</param>
+    /// <param name="fullSize">전체 크기</param>
+    /// <param name="min"></param>
+    /// <param name="margin"></param>
+    /// <param name="innerMargin"></param>
+    /// <param name="count"></param>
+    /// <param name="from"></param>
+    /// <param name="to"></param>
+    /// <returns></returns>
+    public List<Vector2> GetGridMinMax(Vector2 fullGridSize, Vector2 fullSize, Vector2 min, Vector2 margin, Vector2 innerMargin, Vector2Int count, Vector2Int from, Vector2Int to)
+    {
+        Vector2 fromMin = GetGridPoint(fullSize, min, from.x, from.y, margin.x, margin.y, count.x, count.y);
+        fromMin.x -= fullGridSize.x / 2.0f;
+        fromMin.y -= fullGridSize.y / 2.0f;
+        Vector2 toMax = GetGridPoint(fullSize, min, to.x, to.y, margin.x, margin.y, count.x, count.y);
+        toMax.x += fullGridSize.x / 2.0f;
+        toMax.y += fullGridSize.y / 2.0f;
 
         List<Vector2> list = new List<Vector2>(2);
         list.Add(fromMin);
