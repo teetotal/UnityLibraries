@@ -269,4 +269,57 @@ public class LoaderPerspective
         panel.transform.SetParent(mCanvas);
         return panel;
     }
+
+    /*
+    Instantiate 된 object여야 함.
+    이미 생성한 object의 위치만 잡아주는 기능  
+    */
+    public void CreateScrollViewItems(List<GameObject> objects, 
+                                float margin, 
+                                Vector2 scrollviewSize, 
+                                LoaderButtonOnClickCallBack onClickCallBack,
+                                bool isHorizon= true, 
+                                string contentName = "Content")
+    {
+        int count = objects.Count;
+        if(count == 0)
+            return;
+
+        GameObject content = GameObject.Find(contentName);
+        Vector2 objectSize = objects[0].GetComponent<RectTransform>().sizeDelta;
+
+        if(isHorizon)
+        {
+            objectSize.x += margin;
+            content.GetComponent<RectTransform>().sizeDelta = new Vector2(objectSize.x * count + (margin * 2), scrollviewSize.y);
+        }
+        else
+        {
+            objectSize.y += margin;
+            content.GetComponent<RectTransform>().sizeDelta = new Vector2(scrollviewSize.x, objectSize.y * count + (margin * 2));
+        }
+        
+        for(int n = 0; n < count; n++)
+        {
+            Vector3 pos;
+            if(isHorizon)
+            {
+                pos = new Vector3(n * objectSize.x + (objectSize.x / 2) + margin, 0, 0);
+            }
+            else
+            {
+                pos = new Vector3(0, n * objectSize.y + (objectSize.y / 2) + margin, 0);
+            }
+            objects[n].transform.position = pos;
+            objects[n].transform.SetParent(content.transform);
+
+            Button btn = objects[n].GetComponentInChildren<Button>();
+            if(btn != null)
+            {
+                GameObject o = objects[n];
+                btn.onClick.AddListener(() => {onClickCallBack(o);});
+            }
+            
+        }
+    }
 }

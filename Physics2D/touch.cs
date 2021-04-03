@@ -24,9 +24,9 @@ public class Touch
     /*
     Sprite에 AddComponent<BoxCollider2D>() 같은걸 추가해야 작동함
     */
-    public GameObject GetTouchedObject(Vector3 position)
+    public GameObject GetTouchedObject()
     {
-        Vector3 pos = Camera.main.ScreenToWorldPoint(position);
+        Vector3 pos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         Vector2 pos2d = new Vector2(pos.x, pos.y);
         
         RaycastHit2D hit = Physics2D.Raycast(pos2d, Vector2.zero);
@@ -37,10 +37,10 @@ public class Touch
 
         return null;
     }
-    public GameObject GetTouchedObject3D(Vector3 position)
+    public GameObject GetTouchedObject3D()
     {
         RaycastHit hit;
-        Ray ray = Camera.main.ScreenPointToRay(position);
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         Physics.Raycast(ray, out hit);
 
         if(hit.collider != null)
@@ -67,4 +67,8 @@ public class Touch
 
         return obj;
     }*/
+    public Vector3 GetTouchedPosition()
+    {
+        return Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, -Camera.main.transform.position.z));
+    }
 }
