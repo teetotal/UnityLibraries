@@ -276,16 +276,20 @@ public class LoaderPerspective
     */
     public void CreateScrollViewItems(List<GameObject> objects, 
                                 float margin, 
-                                Vector2 scrollviewSize, 
                                 LoaderButtonOnClickCallBack onClickCallBack,
+                                GameObject scrollview, 
                                 bool isHorizon= true, 
+                                string viewportName = "Viewport",
                                 string contentName = "Content")
     {
         int count = objects.Count;
         if(count == 0)
             return;
 
-        GameObject content = GameObject.Find(contentName);
+        Vector2 scrollviewSize = scrollview.GetComponent<RectTransform>().sizeDelta;
+
+        GameObject content = scrollview.transform.Find(viewportName).transform.Find(contentName).gameObject;
+       
         Vector2 objectSize = objects[0].GetComponent<RectTransform>().sizeDelta;
 
         if(isHorizon)
@@ -310,8 +314,9 @@ public class LoaderPerspective
             {
                 pos = new Vector3(0, n * objectSize.y + (objectSize.y / 2) + margin, 0);
             }
-            objects[n].transform.position = pos;
+
             objects[n].transform.SetParent(content.transform);
+            objects[n].transform.position = pos;
 
             Button btn = objects[n].GetComponentInChildren<Button>();
             if(btn != null)
@@ -321,5 +326,14 @@ public class LoaderPerspective
             }
             
         }
+    }
+    public GameObject CreateByPrefab(string prefab, Transform parent, Vector2 size, Vector3 position)
+    {
+        GameObject obj = Resources.Load<GameObject>(prefab);
+        obj = GameObject.Instantiate(obj, position, Quaternion.identity);
+        obj.GetComponent<RectTransform>().sizeDelta = size;
+        obj.transform.SetParent(parent);
+
+        return obj;
     }
 }
