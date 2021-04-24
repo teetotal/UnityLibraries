@@ -291,16 +291,19 @@ public class LoaderPerspective
         GameObject content = scrollview.transform.Find(viewportName).transform.Find(contentName).gameObject;
        
         Vector2 objectSize = objects[0].GetComponent<RectTransform>().sizeDelta;
+        Vector2 contentSize;
 
         if(isHorizon)
         {
             objectSize.x += margin;
-            content.GetComponent<RectTransform>().sizeDelta = new Vector2(objectSize.x * count + (margin * 2), scrollviewSize.y);
+            contentSize = new Vector2(objectSize.x * count + (margin * 2), scrollviewSize.y * 0.9f);
+            content.GetComponent<RectTransform>().sizeDelta = contentSize;
         }
         else
         {
             objectSize.y += margin;
-            content.GetComponent<RectTransform>().sizeDelta = new Vector2(scrollviewSize.x, objectSize.y * count + (margin * 2));
+            contentSize = new Vector2(scrollviewSize.x * 0.95f, objectSize.y * count + (margin * 2));
+            content.GetComponent<RectTransform>().sizeDelta = contentSize;
         }
         
         for(int n = 0; n < count; n++)
@@ -308,11 +311,12 @@ public class LoaderPerspective
             Vector3 pos;
             if(isHorizon)
             {
-                pos = new Vector3(n * objectSize.x + (objectSize.x / 2) + margin, 0, 0);
+                pos = new Vector3(n * objectSize.x + (objectSize.x / 2) + margin, contentSize.y * 0.5f, 0);
             }
             else
             {
-                pos = new Vector3(0, n * objectSize.y + (objectSize.y / 2) + margin, 0);
+                Vector3 contentPos = content.transform.position;
+                pos = new Vector3(contentPos.x + (contentSize.x * 0.5f), contentPos.y - (n * objectSize.y + (objectSize.y / 2) + margin), 0);
             }
 
             objects[n].transform.SetParent(content.transform);
