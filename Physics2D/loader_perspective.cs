@@ -272,7 +272,9 @@ public class LoaderPerspective
 
     /*
     Instantiate 된 object여야 함.
-    이미 생성한 object의 위치만 잡아주는 기능  
+    이미 생성한 object의 위치만 잡아주는 기능.
+    위치 잡다 포기. 걍 content에 Horizon/Vertical Layout Group 추가해서 쓰는게 젤 깔끔함
+    스크롤바 초기 위치는 content의 rect > pivot으로 설정
     */
     public void CreateScrollViewItems(List<GameObject> objects, 
                                 float margin, 
@@ -296,32 +298,37 @@ public class LoaderPerspective
         if(isHorizon)
         {
             objectSize.x += margin;
-            contentSize = new Vector2(objectSize.x * count + (margin * 2), scrollviewSize.y * 0.9f);
-            content.GetComponent<RectTransform>().sizeDelta = contentSize;
+            contentSize = new Vector2(objectSize.x * count + (margin * 2), objectSize.y);
         }
         else
         {
             objectSize.y += margin;
-            contentSize = new Vector2(scrollviewSize.x * 0.95f, objectSize.y * count + (margin * 2));
-            content.GetComponent<RectTransform>().sizeDelta = contentSize;
+            contentSize = new Vector2(objectSize.x, objectSize.y * count + (margin * 2));
         }
+        content.GetComponent<RectTransform>().sizeDelta = contentSize;
         
         for(int n = 0; n < count; n++)
         {
+            /*
             Vector3 pos;
+            Vector3 contentPos = content.transform.position;
+
             if(isHorizon)
             {
-                pos = new Vector3(n * objectSize.x + (objectSize.x / 2) + margin, contentSize.y * 0.5f, 0);
+                pos = new Vector3(margin + (n* objectSize.x) + (objectSize.x * 0.5f) - (contentSize.x * 0.5f), 0, 0);
+                objects[n].transform.position = pos;
             }
             else
             {
-                Vector3 contentPos = content.transform.position;
-                pos = new Vector3(contentPos.x + (contentSize.x * 0.5f), contentPos.y - (n * objectSize.y + (objectSize.y / 2) + margin), 0);
+                pos = new Vector3(0, 0, 0);
+                objects[n].transform.position = pos;
+                Debug.Log(pos);
             }
+            */
 
+            
             objects[n].transform.SetParent(content.transform);
-            objects[n].transform.position = pos;
-
+            
             Button btn = objects[n].GetComponentInChildren<Button>();
             if(btn != null)
             {
