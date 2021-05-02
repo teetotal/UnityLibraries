@@ -277,10 +277,11 @@ public class LoaderPerspective
     스크롤바 초기 위치는 content의 rect > pivot으로 설정
     */
     public void CreateScrollViewItems(List<GameObject> objects, 
-                                float margin, 
+                                Vector2 margin, 
+                                Vector2 spacing,
                                 LoaderButtonOnClickCallBack onClickCallBack,
                                 GameObject scrollview, 
-                                bool isHorizon= true, 
+                                int colCount,
                                 string viewportName = "Viewport",
                                 string contentName = "Content")
     {
@@ -295,6 +296,11 @@ public class LoaderPerspective
         Vector2 objectSize = objects[0].GetComponent<RectTransform>().sizeDelta;
         Vector2 contentSize;
 
+        contentSize = new Vector2(
+            (margin.x * 2) + (colCount * (objectSize.x + spacing.x)),
+            (margin.y * 2) + (((int)(objects.Count / colCount) + 1) * (objectSize.y + spacing.x))
+        );
+        /*
         if(isHorizon)
         {
             objectSize.x += margin;
@@ -305,6 +311,7 @@ public class LoaderPerspective
             objectSize.y += margin;
             contentSize = new Vector2(objectSize.x, objectSize.y * count + (margin * 2));
         }
+        */
         content.GetComponent<RectTransform>().sizeDelta = contentSize;
         
         for(int n = 0; n < count; n++)
