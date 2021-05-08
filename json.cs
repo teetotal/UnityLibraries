@@ -47,7 +47,7 @@ public class Json
         return ToObject<T>(json);
     }
 
-    public static void SaveJsonFile(string path, object json)
+    public static string SaveJsonFile(string path, object json)
     {
         string filename = _res + GetFileName(path);
         //resources에 저장 못함. 저장하는법 찾아서 고쳐야 함
@@ -56,5 +56,7 @@ public class Json
         byte[] buffer = Encoding.UTF8.GetBytes(j);
         f.Write(buffer, 0, buffer.Length);
         f.Close();
+
+        return filename;
     }
 }
